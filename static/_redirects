@@ -1,0 +1,3 @@
+# Redirects for Single Page App behavior
+/rb/*  /rb.html  200
+/*     /index.html  200
