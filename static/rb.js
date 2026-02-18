@@ -309,7 +309,7 @@ function renderStepPage() {
                             ← Previous Step
                         </a>
                     ` : '<div></div>'}
-                    <button id="nextBtn" class="btn btn-primary" disabled>
+                    <button id="nextBtn" class="btn btn-primary">
                         Next Step →
                     </button>
                 </div>
