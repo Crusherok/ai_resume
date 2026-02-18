@@ -649,6 +649,8 @@ async function saveArtifact(status) {
             statusBadge.querySelector('span:last-child').textContent = 'Completed';
 
             showToast('Artifact saved successfully! ✓', 'success');
+        } else {
+            throw new Error('API not available');
         }
     } catch (error) {
         console.warn('API save failed (expected in static mode):', error);
