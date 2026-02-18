@@ -252,8 +252,8 @@ function init() {
 
     // Get step from URL for static sites
     // URL format: /rb/step-name
-    const pathParts = window.location.pathname.split('/');
-    const stepInUrl = pathParts[pathParts.length - 1];
+    const pathParts = window.location.pathname.split('/').filter(p => p); // Remove empty strings
+    const stepInUrl = pathParts[pathParts.length - 1]; // Get last non-empty segment
 
     // Validate step exists, otherwise default to first step
     if (STEPS[stepInUrl] || stepInUrl === 'proof') {
@@ -652,8 +652,11 @@ async function saveArtifact(status) {
         }
     } catch (error) {
         console.warn('API save failed (expected in static mode):', error);
-        // Mock success for static demo
-        artifacts[`rb_step_${stepNumber}_artifact`] = artifactData;
+        // Mock success for static demo & PERSIST to localStorage
+        const artifactKey = `rb_step_${stepNumber}_artifact`;
+        artifacts[artifactKey] = artifactData;
+        localStorage.setItem('rb_artifacts', JSON.stringify(artifacts));
+
         document.getElementById('nextBtn').disabled = false;
 
         // Update status badge
@@ -687,7 +690,28 @@ async function loadArtifacts() {
         }
     } catch (error) {
         console.log('API load failed (expected in static mode):', error);
-        // Fallback or just ignore
+
+        // Fallback to localStorage
+        try {
+            const saved = localStorage.getItem('rb_artifacts');
+            if (saved) {
+                artifacts = JSON.parse(saved);
+
+                // Check if current step is completed
+                const stepNumber = currentStep.split('-')[0];
+                const artifactKey = `rb_step_${stepNumber}_artifact`;
+
+                if (artifacts[artifactKey] && currentStep !== 'proof') {
+                    document.getElementById('nextBtn').disabled = false;
+                    const statusBadge = document.querySelector('.status-badge');
+                    statusBadge.classList.remove('in-progress');
+                    statusBadge.classList.add('completed');
+                    statusBadge.querySelector('span:last-child').textContent = 'Completed';
+                }
+            }
+        } catch (e) {
+            console.error('Local storage load failed', e);
+        }
     }
 }
 
