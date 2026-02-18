@@ -689,6 +689,8 @@ async function loadArtifacts() {
                 statusBadge.classList.add('completed');
                 statusBadge.querySelector('span:last-child').textContent = 'Completed';
             }
+        } else {
+            throw new Error('API not available');
         }
     } catch (error) {
         console.log('API load failed (expected in static mode):', error);
